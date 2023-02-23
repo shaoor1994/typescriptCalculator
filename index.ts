@@ -1,48 +1,33 @@
+
+import chalk from 'chalk';
+import chalkAnimation from 'chalk-animation';
+import { sleep } from './src/utils/index.js';
+
 import inquirer from 'inquirer';
+import { questions } from './src/questions.js';
 
-async function main() {
-  const { num1, num2 } = await inquirer.prompt([
-    {
-      name: 'num1',
-      message: 'Enter the first number:',
-      type: 'number',
-    },
-    {
-      name: 'num2',
-      message: 'Enter the second number:',
-      type: 'number',
-    },
-  ]);
+import AnswersI from './src/ts/index';
+import { performCalculation } from './src/calculator.js';
 
-  const { operation } = await inquirer.prompt([
-    {
-      name: 'operation',
-      message: 'Select an operation:',
-      type: 'list',
-      choices: ['add', 'subtract', 'multiply', 'divide'],
-    },
-  ]);
-
-  let result: number;
-  switch (operation) {
-    case 'add':
-      result = num1 + num2;
-      break;
-    case 'subtract':
-      result = num1 - num2;
-      break;
-    case 'multiply':
-      result = num1 * num2;
-      break;
-    case 'divide':
-      result = num1 / num2;
-      break;
-    default:
-      console.log('Invalid operation');
-      return;
-  }
-
-  console.log(`The result is: ${result}`);
+async function welcome() {
+  const rainbowTitle = chalkAnimation.rainbow('Welcome to the CLI Calculator! A Project by Saad Shaoor Ghazanfar');
+  
+  await sleep();
+  console.log(`
+    ${chalk.bgCyan('Instructions ')}
+    ${chalk.blue('1.')} Choose an operation.
+    ${chalk.blue('2.')} Enter a first number.
+    ${chalk.blue('3.')} Enter a second number.
+    ${chalk.blue('4.')} Press enter to see the answer.  
+  `)
+  rainbowTitle.stop();
+  await sleep(1000);
 }
 
-main();
+export default async function promptQuestions() {
+  const answers = await inquirer.prompt(questions);
+  return performCalculation(answers as AnswersI);
+}
+
+await welcome();
+await promptQuestions();
